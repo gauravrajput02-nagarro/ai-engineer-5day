@@ -1,0 +1,24 @@
+Day 1 Plan: Talk to an LLM properly
+
+Goal: call an LLM from Python and control what it says and how it says it.
+Provider: Groq, model openai/gpt-oss-20b.
+
+What I did
+  1. Set up venv, installed groq, pydantic, python-dotenv, put the key in .env
+  2. 01_first_call.py        first API call, printed reply, token usage, cost
+  3. llm_client.py           LLMClient with timeout and retries (exponential backoff + jitter)
+  4. 02_test_retries.py      tested the retry logic with fake errors
+  5. 03_prompt_compare.py    bad prompt vs good prompt (task, role, context, constraints, output format)
+  6. 04_ticket_classifier.py classifier returning category, urgency, summary as validated JSON
+  7. Ran the classifier 20 times on one email to check the JSON shape
+
+Check questions (answers are in notes.txt)
+  - Why does the model forget my last message unless I send it again?
+  - Is the JSON shape identical across 20 runs?
+  - JSON mode vs schema-enforced output?
+
+Done
+  [x] All scripts run
+  [x] Classifier gives the same shape 20/20 times
+  [x] Notes written
+  [ ] Commit to Git

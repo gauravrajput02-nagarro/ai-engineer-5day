@@ -1,0 +1,38 @@
+Day 1 Notes
+
+Provider: Groq. Model: openai/gpt-oss-20b (supports schema-enforced json_schema).
+llama-3.3-70b-versatile was not available on my key, so I switched.
+
+Check questions
+
+1. Why does the model forget my last message unless I resend it?
+   Every API call is stateless. The model only sees the messages list in that one request.
+   In 01_first_call.py, without history it says it does not know my name; when I resend
+   the earlier turns it answers "Gaurav". Chat "memory" is just the client resending history,
+   which also means the cost grows as the conversation gets longer.
+
+2. Is the classifier's JSON shape identical across 20 runs?
+   Yes. 20/20 runs gave the same keys (category, summary, urgency) and the same values
+   (billing, high). I used schema-enforced output, temperature 0, two few-shot examples
+   and a Pydantic check.
+
+3. JSON mode vs schema-enforced output?
+   JSON mode only guarantees the reply parses as JSON. When I tried it, the replies were valid
+   JSON with the right keys, but category came back as "payment", which is not in my allowed
+   values, so Pydantic rejected all 20. Schema mode constrains keys, types and enum values.
+   The content can still be wrong even when the shape is right, which is what Day 4 evals are for.
+
+What I learned / what broke
+  - llama-3.3-70b-versatile gave a 404. I listed the models my key can use and switched.
+  - gpt-oss is a reasoning model, reasoning tokens count against max_tokens, so I set
+    reasoning_effort to low and a 1024 default.
+  - Groq JSON mode returns a 400 unless the word "json" appears in the messages.
+  - The free tier hit rate limits (429) during the 20x loops, and the retry/backoff handled it.
+  - Prices in llm_client.py are approximate, check them on the Groq pricing page.
+
+How to run
+  cd day1
+  ..\.venv\Scripts\python.exe 01_first_call.py
+  ..\.venv\Scripts\python.exe 02_test_retries.py
+  ..\.venv\Scripts\python.exe 03_prompt_compare.py
+  ..\.venv\Scripts\python.exe 04_ticket_classifier.py
