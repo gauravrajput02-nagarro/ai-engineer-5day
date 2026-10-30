@@ -1,3 +1,5 @@
 groq
 pydantic
 python-dotenv
+mcp
+mcp-server-time

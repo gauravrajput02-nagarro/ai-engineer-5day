@@ -1,0 +1,53 @@
+Day 2 Notes
+
+Check questions
+
+1. Why does the model never run my function itself?
+   The model only produces text. In 01_tool_request.py the reply had finish_reason=tool_calls,
+   no text, and a structured request: get_order_status({"order_id":"A100"}). Nothing had run.
+   My code reads that request, calls the Python function, and sends the result back as a
+   "tool" message. That is also the safety point: I decide whether and how to run anything.
+
+2. What stops my agent if a tool keeps returning errors?
+   max_steps. In 02_agent_demo.py the tool always returned "Error: service unavailable" and
+   I told the agent never to give up. It called the tool 4 times and then the loop stopped with
+   "reached max_steps=4". Without that cap it would loop forever and keep spending tokens.
+   Helpful error messages matter too: for the unknown order Z999 the error said valid ids look
+   like A100, and the model stopped and explained instead of guessing.
+
+3. In MCP, what is the difference between host, client and server?
+   Host = the AI app (my agent script here, or Claude Desktop / an IDE). Client = the
+   connection object the host creates, one per server (ClientSession in my code). Server = the
+   program that exposes tools/resources/prompts (mcp-server-time), talking to the client over
+   stdio for local servers or Streamable HTTP for remote ones.
+
+Break it on purpose (04_vague_tool.py)
+  Question: "Did I get my money back for order A101?"
+  Vague tools (fetch_a and fetch_b, both described "Gets data.", param "id"):
+    the model called fetch_a, which is the order status tool, got "processing" and told the
+    customer the refund was still processing. Confident and wrong.
+  Fixed tools (get_refund_status with "Use only when the user asks about money back or refunds"):
+    called the right tool and answered "refund approved".
+  My first attempt kept the real names (get_order_status / get_refund_status) with the vague
+  description, and the model still got it right because the names carried the meaning. The
+  description matters most when names are not self-explanatory.
+
+What I learned / what broke
+  - mcp Tool objects use input_schema (snake_case), not inputSchema, so the first MCP run crashed.
+  - No Node.js on this machine, so I used a Python MCP server (mcp-server-time) instead of the
+    npx filesystem server. It exposes get_current_time and convert_time, and the agent mixed
+    those with my local get_order_status in one run.
+  - Tool results must go back with the matching tool_call_id, and the assistant message with
+    its tool_calls must be appended before the tool results.
+  - Model's final answer in the vague run, and one earlier run, stated things the tool did not
+    say (for example "money has been returned" when the tool only said "refund approved").
+    Tool-using agents still need checking.
+  - Calculator uses ast parsing with an allowlist of operators instead of eval(), because
+    model-written input must not be run as code.
+
+How to run
+  cd day2
+  ..\.venv\Scripts\python.exe 01_tool_request.py
+  ..\.venv\Scripts\python.exe 02_agent_demo.py
+  ..\.venv\Scripts\python.exe 03_mcp_agent.py
+  ..\.venv\Scripts\python.exe 04_vague_tool.py
