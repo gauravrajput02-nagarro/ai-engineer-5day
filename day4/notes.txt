@@ -1,0 +1,57 @@
+Day 4 Notes
+
+Model for Day 4 and Day 5: qwen/qwen3.8-27b (reasoning off). Days 1 to 3 used openai/gpt-oss-20b.
+I switched because the free tier daily token limit (200,000 per day) for gpt-oss-20b ran out
+after repeated eval runs. Prices for Qwen in tracing.py are my assumption (0.29 / 0.59 per 1M tokens),
+so the dollar numbers are only a rough guide.
+
+Observability (tracing.py, app.py, 01_trace_demo.py)
+  I did not use Langfuse: I have no account or keys, and there is no Docker on this machine to
+  self-host it. I wrote a small local tracer that follows the same ideas and writes one JSON
+  line per request to traces/traces.jsonl:
+    trace        one request (id, session id, input, output, total tokens, total cost, duration)
+    observation  one step inside it: a span (retrieve) or a generation (the LLM call, with model,
+                 tokens, cost), each with input, output and duration
+    score        ratings attached to a trace (used by the eval below)
+    session      traces grouped by session_id
+  If I connect Langfuse later, the same structure maps onto its trace/observation/score model.
+
+  Reading real traces (01_trace_demo.py): each RAG request is 2 steps, retrieve (about 0.4 to 0.5 s)
+  and generate (0.2 to 0.8 s). The generate step is always the most expensive (about $0.0002 to
+  $0.0003, roughly 750 input tokens, almost all of it the retrieved context). The slowest step
+  is retrieve or generate depending on the request. To cut cost: send fewer or shorter chunks,
+  or use a smaller model for simple questions. To cut latency: cache the question embedding or
+  retrieve in parallel.
+
+Evals (dataset.json, 02_run_eval.py)
+  20 questions, 18 answerable with expected facts and the right source file, 2 unanswerable
+  (the answer must be "I don't know"). Three scores per answer:
+    has_expected_facts   exact check that key facts appear in the answer
+    cites_right_source   exact check that the right file name is cited
+    faithful_judge       LLM as judge: is every claim supported by the retrieved text?
+  Before and after, changing only the system prompt:
+                facts   cites   faithful   avg cost    avg time
+    prompt_v1    85%     10%      95%      $0.000230   10.5 s
+    prompt_v2   100%     95%     100%      $0.000241   13.2 s
+  v1 is "Answer the question using the context. Be helpful." and v2 is the Day 3 prompt (only
+  from the context, say I don't know, cite the file in brackets). Citations went from 10% to 95%,
+  and the unanswerable questions improved. v2 still fails 1 question: "What is the model number
+  of the filter cartridge?" cited 01_setup_and_usage.txt but my dataset expected
+  02_maintenance.txt. FC-300 is also listed in the box contents in 01_setup_and_usage.txt,
+  so this is probably a mistake in my dataset, not in the model. I left the dataset as is.
+
+  Caveats: 20 questions is small, so one question is 5 points. The judge is the same model as the
+  answerer, which is a known weakness. The average time is dominated by waiting (about 10 s per
+  request), likely the Groq free tier rate limit retries in the SDK, not real model speed.
+
+What I learned / what broke
+  - Scorer bugs looked like model bugs. "2-year" did not match "2 year", and "should not" did not
+    match "never". I allowed alternatives with | in the dataset.
+  - Running full evals many times burned the daily token quota. Evals need a budget.
+  - Judge output must be forced to JSON and parsed defensively.
+
+How to run
+  cd day4
+  $env:MODEL="qwen/qwen3.8-27b"; $env:REASONING="none"
+  ..\.venv\Scripts\python.exe 01_trace_demo.py
+  ..\.venv\Scripts\python.exe 02_run_eval.py        (output saved in eval_output.txt)

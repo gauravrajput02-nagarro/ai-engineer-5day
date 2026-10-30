@@ -1,0 +1,8 @@
+groq
+pydantic
+python-dotenv
+chromadb
+rank_bm25
+fastapi
+uvicorn
+httpx

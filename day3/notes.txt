@@ -1,0 +1,61 @@
+Day 3 Notes
+
+Setup
+  Documents: 4 text files in docs/ for a fictional water purifier manual (AquaPure X200): setup,
+  maintenance, error codes, warranty. I wrote them myself so I know the right answers.
+  Embeddings + vector DB: Chroma with its built-in MiniLM embedding model (runs locally, the model
+  downloads once, about 80 MB). Groq does not offer embeddings, so I did not use it for that.
+  Keyword search: BM25 (rank_bm25). Generation: Groq openai/gpt-oss-20b.
+
+Pipeline (rag.py)
+  load docs -> chunk by words (size + overlap) -> embed + store in Chroma -> at question time:
+  retrieve top k -> prompt says "answer only from the context, cite [file], else say I don't know".
+  Retrieval modes: vector, keyword (BM25), hybrid (vector + BM25 merged with reciprocal rank fusion),
+  multi (an LLM splits the question into sub-questions, hybrid search for each, merge).
+
+Q&A (02_ask.py)
+  4 questions (filter interval, refund, warranty, E-4021) all answered correctly with the right
+  file cited.
+
+Debugging (03_debug.py, cases.py)
+  8 test questions. For each one I check retrieval (does the retrieved text contain the key fact?)
+  separately from the answer (does the answer contain it?), so I can tell which stage failed.
+  Baseline: chunk size 50, overlap 10, top 2, vector only. 5 of 8 right. Three failures, all RETRIEVAL:
+    1. "What does E-3105 mean?"  The chunk with the meaning was split from the code, vector search
+       returned neighbours about other error codes. The model then made up "a sensor fault".
+       Fix: bigger chunks (120/30), top 4, hybrid search (BM25 matches the exact token E-3105).
+    2. "Error E-2007 on my unit"  The fix ("booster pump") sat in a different small chunk from the code.
+       Fix: same, bigger chunks and top 4.
+    3. "My unit shows E-5500. What do I do and who do I call?"  Two needs in one question: the
+       error fix is in error_codes, the phone number is in warranty. Top k all comes from the error
+       code file because E-5500 dominates the query.
+       Tried: top 6, hybrid, and splitting the question into sub-questions. Still not fixed.
+       My first split prompt told the model to keep the error code in every sub-query, which made
+       it worse; changing that prompt did not help because the model still put E-5500 in the
+       contact sub-query. Not solved. The answer was a correct pump fix plus no phone number.
+  After fixes: 7 of 8 right (the E-5500 question is the remaining failure).
+
+What I learned
+  - Chunk size matters: 50 words split facts from their headings, 120 words kept them together.
+  - A pure vector search is weak on exact identifiers like E-3105, BM25 handles them. Hybrid is
+    the safest default.
+  - A single retrieval query cannot cover a question with two separate information needs.
+    Next things to try: retrieve per sub-question without the shared identifier, a reranker,
+    or an agent that searches more than once (the Day 2 loop with a search tool).
+  - My first answer check was fooled: the model writes non-breaking hyphens (U+2011), so
+    "555-0142" did not match. Normalise text before checking.
+  - My first answer check was also too loose: "sensor" matched a wrong answer. I tightened
+    the expected words in cases.py.
+  - The manual is tiny (13 chunks), so retrieval looks better than it would on a big corpus.
+
+When to use what (from the guide)
+  Changing/private/large docs: RAG. Small fixed document: just paste it in the prompt.
+  Exact IDs: keyword search or SQL. Consistent style: fine-tuning.
+
+How to run
+  cd day3
+  ..\.venv\Scripts\python.exe 01_build_index.py
+  ..\.venv\Scripts\python.exe 02_ask.py
+  ..\.venv\Scripts\python.exe 03_debug.py 50 10 2 vector        (baseline)
+  ..\.venv\Scripts\python.exe 03_debug.py 120 30 4 hybrid       (fixed)
+  arguments: chunk size, overlap, top k, comma separated modes (vector,keyword,hybrid,multi)

@@ -1,0 +1,20 @@
+AquaPure X200 Water Purifier - Setup and Usage
+
+1. What is in the box
+The box contains the AquaPure X200 unit, one 3-stage filter cartridge (model FC-300), a 1.5 meter inlet hose, a wall mounting bracket, four screws, and this manual.
+
+2. Installation
+Mount the bracket on a wall at least 40 cm above the counter. Hang the unit on the bracket and tighten the four screws. Connect the inlet hose to the cold water tap using the supplied adapter and hand-tighten. Do not use a wrench on the adapter because it can crack the plastic thread.
+Plug the unit into a grounded 220-240 V outlet. The power light turns white when the unit has power.
+
+3. First use
+Open the tap fully and press the Start button for 3 seconds. The unit flushes the new filter for 10 minutes. The flush water is cloudy and is not safe to drink. Discard all water produced during the first flush. After the flush, the status light turns green and the unit is ready.
+
+4. Daily use
+Press the Start button to dispense water. The flow rate is 2 liters per minute. The unit stops automatically when the 5 liter internal tank is full. Hot water is not supported. The inlet water temperature must stay between 5 and 40 degrees Celsius.
+
+5. Water pressure
+The unit works with inlet water pressure between 0.15 and 0.4 MPa. Below 0.15 MPa the flow is weak and the unit may show error E-2007. Above 0.4 MPa install a pressure reducing valve before the inlet hose.
+
+6. Specifications
+Power: 45 W. Tank capacity: 5 liters. Dimensions: 32 x 18 x 42 cm. Weight: 6.8 kg. Filter life: 6 months or 3000 liters, whichever comes first.

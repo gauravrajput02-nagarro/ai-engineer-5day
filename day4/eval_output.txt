@@ -1,0 +1,69 @@
+﻿Running prompt_v1 on 20 questions...
+Running prompt_v2 on 20 questions...
+
+               facts   cites  faithful       avg $   avg s
+prompt_v1        85%     10%       95%    0.000230   10.53
+prompt_v2       100%     95%      100%    0.000241   13.24
+
+Questions where v2 differs from v1:
+- How often should the filter be replaced?
+    v1 facts=False cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- How long is the warranty?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- Is the filter cartridge covered by the warranty?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- How many days do I have to return the unit for a full refund?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- How long does the refund take after the unit is received?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- How much does a pack of 2 filters cost?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What is the support phone number?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What does error E-4021 mean?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What should I do when the unit shows E-3105?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What causes error E-2007?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What does E-6001 mean?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What is the tank capacity?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- How long is the first flush?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What inlet water temperature range is allowed?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- Can I use bleach to clean the tank?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- How often should I clean the tank?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- What is the power consumption of the unit?
+    v1 facts=True cites=False faithful=True
+    v2 facts=True cites=True faithful=True
+- Does the unit work with sparkling water?
+    v1 facts=False cites=True faithful=False
+    v2 facts=True cites=True faithful=True
+- What is the price of the AquaPure X300?
+    v1 facts=False cites=True faithful=True
+    v2 facts=True cites=True faithful=True
+
+v2 still failing 1 question(s):
+- What is the model number of the filter cartridge?  facts=True cites=False faithful=True
+    answer: 'The model number of the filter cartridge is FC-300 [01_setup_and_usage.txt].'

@@ -1,0 +1,22 @@
+[
+  {"q": "How often should the filter be replaced?", "facts": ["6 months", "3000 liters"], "source": "02_maintenance.txt"},
+  {"q": "What is the model number of the filter cartridge?", "facts": ["FC-300"], "source": "02_maintenance.txt"},
+  {"q": "How long is the warranty?", "facts": ["2 year|2-year|two year"], "source": "04_warranty_and_returns.txt"},
+  {"q": "Is the filter cartridge covered by the warranty?", "facts": ["not covered"], "source": "04_warranty_and_returns.txt"},
+  {"q": "How many days do I have to return the unit for a full refund?", "facts": ["30 days"], "source": "04_warranty_and_returns.txt"},
+  {"q": "How long does the refund take after the unit is received?", "facts": ["7 business days"], "source": "04_warranty_and_returns.txt"},
+  {"q": "How much does a pack of 2 filters cost?", "facts": ["44 USD"], "source": "04_warranty_and_returns.txt"},
+  {"q": "What is the support phone number?", "facts": ["1-800-555-0142"], "source": "04_warranty_and_returns.txt"},
+  {"q": "What does error E-4021 mean?", "facts": ["filter"], "source": "03_error_codes.txt"},
+  {"q": "What should I do when the unit shows E-3105?", "facts": ["drain"], "source": "03_error_codes.txt"},
+  {"q": "What causes error E-2007?", "facts": ["pressure"], "source": "03_error_codes.txt"},
+  {"q": "What does E-6001 mean?", "facts": ["temperature"], "source": "03_error_codes.txt"},
+  {"q": "What is the tank capacity?", "facts": ["5 liters"], "source": "01_setup_and_usage.txt"},
+  {"q": "How long is the first flush?", "facts": ["10 minutes"], "source": "01_setup_and_usage.txt"},
+  {"q": "What inlet water temperature range is allowed?", "facts": ["5", "40"], "source": "01_setup_and_usage.txt"},
+  {"q": "Can I use bleach to clean the tank?", "facts": ["never|should not|do not|don't|not be used"], "source": "02_maintenance.txt"},
+  {"q": "How often should I clean the tank?", "facts": ["3 months"], "source": "02_maintenance.txt"},
+  {"q": "What is the power consumption of the unit?", "facts": ["45 W"], "source": "01_setup_and_usage.txt"},
+  {"q": "Does the unit work with sparkling water?", "facts": ["don't know"], "source": null},
+  {"q": "What is the price of the AquaPure X300?", "facts": ["don't know"], "source": null}
+]

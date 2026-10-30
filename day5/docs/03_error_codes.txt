@@ -1,0 +1,19 @@
+AquaPure X200 Water Purifier - Error Codes and Troubleshooting
+
+The unit shows errors as a red status light that blinks a pattern, and the code is printed on the small display.
+
+Error E-2007: Low inlet pressure. The water pressure is below 0.15 MPa. Check that the tap is fully open and the inlet hose is not kinked. If the problem remains, install a booster pump.
+
+Error E-3105: Tank overflow sensor wet. Water has reached the overflow sensor. Unplug the unit, drain the tank with the drain valve, dry the sensor at the top of the tank with a soft cloth, and restart. If E-3105 returns after the unit is dry, the sensor is faulty and the unit needs service.
+
+Error E-4021: Filter not detected or filter counter failure. The unit cannot read the chip on the filter cartridge. Remove the cartridge, wipe the metal contacts with a dry cloth, and reinsert it until it clicks. If E-4021 still appears, hold the Start button for 10 seconds to reset the counter. If it still appears after the reset, the cartridge may be a non-genuine one, so try a new genuine FC-300 cartridge.
+
+Error E-5500: Pump failure. The internal pump is not running. Unplug the unit for 5 minutes and restart. If E-5500 returns, contact support because the pump must be replaced by a technician.
+
+Error E-6001: Water temperature out of range. The inlet water is below 5 or above 40 degrees Celsius. Use cold tap water only.
+
+Other problems
+Water tastes strange after a filter change: run the 10 minute first flush again.
+Unit does not turn on: check the outlet and the power cable, then try another outlet.
+Slow flow: check inlet pressure and replace the filter if it is more than 6 months old.
+Unit leaks from the bottom: unplug the unit immediately and contact support. Do not keep using it.

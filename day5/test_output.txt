@@ -1,0 +1,77 @@
+﻿health: {'status': 'ok', 'chunks': 13}
+
+Q: Ticket T-1001 is open. What does the error in it mean and how do I fix it?
+status: 200
+{
+  "answer": "Ticket T-1001 (Maria, order A100) reports Error E-4021 after a filter change. E-4021 means \"Filter not detected or filter counter failure\" — the unit cannot read the chip on the filter cartridge. To fix it: 1) Remove the cartridge, wipe the metal contacts with a dry cloth, and reinsert it until it clicks. 2) If E-4021 still appears, hold the Start button for 10 seconds to reset the counter. 3) If it still appears after the reset, the cartridge may be non-genuine — try a new genuine FC-300 (2",
+  "sources": [
+    "T-1001",
+    "03_error_codes.txt"
+  ],
+  "confidence": "high",
+  "tools_used": [
+    "lookup_ticket",
+    "search_docs"
+  ],
+  "steps": 3,
+  "trace_id": "6320bfe4c9ea",
+  "cost_usd": 0.001131,
+  "latency_s": 3.0092
+}
+
+Q: How much would 3 packs of 2 filters cost, and what is the support phone number?
+status: 200
+{
+  "answer": "3 packs of 2 filters cost 132 USD (44 USD each). The support phone number is 1-800-555-0142 (Monday to Friday, 9 am to 6 pm Eastern Time).",
+  "sources": [
+    "04_warranty_and_returns.txt"
+  ],
+  "confidence": "high",
+  "tools_used": [
+    "search_docs",
+    "search_docs",
+    "calculator"
+  ],
+  "steps": 3,
+  "trace_id": "9723922db118",
+  "cost_usd": 0.001642,
+  "latency_s": 35.6257
+}
+
+Q: Does the AquaPure X200 work with sparkling water?
+status: 200
+{
+  "answer": "The manual doesn't specifically mention sparkling water, but it states the AquaPure X200 is designed for cold tap water only (inlet temperature 5–40°C, pressure 0.15–0.4 MPa). It's intended to be connected to a cold water tap, so I can't confirm it's suitable for sparkling/carbonated water. For a definitive answer, please contact support.",
+  "sources": [
+    "01_setup_and_usage.txt",
+    "03_error_codes.txt"
+  ],
+  "confidence": "low",
+  "tools_used": [
+    "search_docs",
+    "search_docs",
+    "search_docs"
+  ],
+  "steps": 4,
+  "trace_id": "32852145f22d",
+  "cost_usd": 0.002408,
+  "latency_s": 66.8956
+}
+
+Q: What is the status of ticket T-9999?
+status: 200
+{
+  "answer": "I couldn't find a ticket with id T-9999. Please double-check the ticket number (valid ids look like T-1001).",
+  "sources": [],
+  "confidence": "low",
+  "tools_used": [
+    "lookup_ticket"
+  ],
+  "steps": 2,
+  "trace_id": "24e71f77222a",
+  "cost_usd": 0.000557,
+  "latency_s": 14.0565
+}
+
+last trace observations: [('llm-step-1', 6.4785), ('lookup_ticket', 0.0), ('llm-step-2', 7.5777)]
+bad input status: 422

@@ -3,3 +3,8 @@ pydantic
 python-dotenv
 mcp
 mcp-server-time
+chromadb
+rank_bm25
+fastapi
+uvicorn
+httpx

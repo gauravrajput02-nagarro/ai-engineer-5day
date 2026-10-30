@@ -1,0 +1,74 @@
+Day 5 Notes
+
+Capstone: document Q&A agent for the AquaPure X200 manual.
+Model: qwen/qwen3.8-27b via Groq (reasoning off). Same reason as Day 4: the gpt-oss-20b daily quota ran out.
+
+What it does (app/)
+  agent.py   Day 2 loop with tools: search_docs (Day 3 hybrid RAG: vector + BM25), lookup_ticket
+             (fake tickets T-1001 to T-1003), calculator (ast based, no eval), and final_answer.
+             final_answer's arguments are a Pydantic model (answer, sources, confidence), so the
+             result is structured and validated (Day 1). max 6 steps.
+  rag.py     chunking, in memory Chroma, BM25, hybrid search
+  tracing.py local tracer from Day 4: every LLM step and tool call is saved to traces/traces.jsonl
+  main.py    FastAPI: GET /health, POST /ask, GET /traces/{trace_id}
+
+Test (test_api.py, output in test_output.txt)
+  Ran with FastAPI's TestClient. Results:
+  1. "Ticket T-1001 is open. What does the error in it mean and how do I fix it?"
+     Used lookup_ticket then search_docs, 3 steps, sources T-1001 and 03_error_codes.txt,
+     confidence high. Correct. The answer text ends oddly at "...new genuine FC-300 (2", cut
+     off in the model's own output. I did not find out why.
+  2. "How much would 3 packs of 2 filters cost, and what is the support phone number?"
+     Two searches and the calculator, answer 132 USD and the right phone number. Correct.
+     This is the kind of two part question that failed in the Day 3 retrieval test; the agent
+     handles it by searching twice.
+  3. "Does the AquaPure X200 work with sparkling water?" (not in the manual)
+     It said the manual does not mention it and suggested contacting support, confidence low.
+     Good, but it still listed 2 sources even though my prompt says no sources when unknown.
+  4. "What is the status of ticket T-9999?" Tool returned an error, the agent said it could not
+     find it and did not make anything up. Sources empty, confidence low.
+  Bad input (question too short) returns 422.
+  Cost per request: about $0.0006 to $0.0024 (assumed Qwen prices), shown in each response as
+  cost_usd and in each trace as total_cost_usd. Latency ranged from 3 s to 67 s. The long ones
+  are probably Groq free tier rate limit retries, not the model.
+
+Check questions
+  - What happens if retrieval returns nothing? search_docs returns "No relevant passages found."
+    and the prompt tells the model to say it doesn't know with low confidence. Hybrid search
+    almost always returns something though (vector search always has nearest neighbours), so the
+    sparkling water case shows the model deciding from weak context, not an empty result.
+    A distance cutoff would be the next fix.
+  - How much does one request cost, where to see it? In the response and in the trace file.
+    In Langfuse it would be the cost on each generation. I am not connected to Langfuse.
+  - Self host or hosted API? Self host for data privacy, very high volume, or custom models,
+    and then you own the GPUs, scaling and uptime. Otherwise a hosted API (what I used).
+  - Can someone run it with one command? Not verified. See Docker below.
+
+Docker
+  Dockerfile and .dockerignore are written, but Docker is not installed on this machine, so I
+  never built or ran the image. Treat it as untested. The key is not baked in:
+    docker build -t aquapure-agent .
+    docker run -p 8000:8000 -e GROQ_API_KEY=... -e MODEL=qwen/qwen3.8-27b -e REASONING=none aquapure-agent
+  Without MODEL and REASONING the defaults are gpt-oss-20b and low.
+  Locally (tested):  cd day5; uvicorn app.main:app  with GROQ_API_KEY in the environment or ..\.env.
+  Note: .env is at the repo root, python-dotenv finds it when run from day5.
+
+Inference and GPU serving (concepts)
+  Inference = running a trained model to get an answer. Hard because models are huge, need GPU
+  memory and GPUs are expensive, so keep them busy.
+  Batching: serve many users' requests together. KV cache: remember earlier computation so the
+  model does not redo work for every new token. Quantization: shrink numbers (16 bit to 4 bit)
+  to fit smaller GPUs at a small quality cost. Engines like vLLM implement these.
+  Metrics: time to first token, tokens per second, cost per million tokens.
+  Hosted API vs self hosting as above. I did not do the optional vLLM stretch.
+
+Still missing from the guide's finish line
+  - Capstone is not on GitHub (no git repo yet) and there is no README or architecture diagram.
+  - No Langfuse trace screenshot (local JSON traces instead).
+  - Docker image not built.
+
+How to run
+  cd day5
+  $env:MODEL="qwen/qwen3.8-27b"; $env:REASONING="none"
+  ..\.venv\Scripts\python.exe test_api.py
+  ..\.venv\Scripts\python.exe -m uvicorn app.main:app --port 8000
